@@ -1,10 +1,10 @@
 // created by John Read for UCSB Datascience Bootcamp
 // Chart chart size
 var svgWidth = 1200;
-var svgHeight = 900;
+var svgHeight = 950;
 
 var margin = {
-    top: 75,
+    top: 20,
     right: 40,
     bottom: 60,
     left: 50
@@ -13,7 +13,7 @@ var margin = {
 var width = svgWidth - margin.left - margin.right;
 var height = svgHeight - margin.top - margin.bottom;
 
-// SVG wrapper
+// Wrapper, append group, and shift by left and top margins.
 var chart = d3
     .select("#scatter")
     .append("div")
@@ -29,15 +29,13 @@ var chartGroup = svg.append("g")
 // Import data
 d3.csv("./assets/data/data.csv").then(function(censusData) {
 
-    // console.log(censusData)
-
-    // data as numbers
+    // Format data
     censusData.forEach(function (data) {
         data.poverty = +data.poverty;
         data.heathcare = +data.healthcare;
     });
 
-    // scale
+    // Create scaling
     var xScale = d3.scaleLinear()
         // .domain([8, d3.max(censusData, d => d.poverty)])
         .domain([d3.min(censusData, d => d.poverty) * 0.9,
@@ -48,7 +46,7 @@ d3.csv("./assets/data/data.csv").then(function(censusData) {
         .domain([0, d3.max(censusData, d => d.heathcare) * 1.1])
         .range([height, 0]);
 
-    // Create axis
+    // Create axis functions
     var bottomAxis = d3.axisBottom(xScale)
     var leftAxis = d3.axisLeft(yScale);
 
@@ -83,12 +81,12 @@ d3.csv("./assets/data/data.csv").then(function(censusData) {
         .attr("dy", 3)
         .attr("font-size", "10px");
 
-    // Add axes
+    // Add axes labels
     var povertyText = chartGroup
         .append("text")
         .attr("transform", `translate(${width / 2}, ${height + margin.top + 20})`)
         .classed("aText", true)
-        .text("In Poverty (%)");
+        .text("Poverty (%)");
     
     var healthcareText = chartGroup
       .append("text")
@@ -97,7 +95,7 @@ d3.csv("./assets/data/data.csv").then(function(censusData) {
       .attr("x", 0 - (height / 2))
       .attr("dy", "1em")
       .style("text-anchor", "middle")
-      .text("Lacking Healthcare (%)");   
+      .text("Lacks Healthcare (%)");   
       
     // Add tool tips
     var toolTip = d3.tip()
@@ -109,4 +107,3 @@ d3.csv("./assets/data/data.csv").then(function(censusData) {
     //add events
     circlesGroup.on("mouseover", toolTip.show).on("mouseout", toolTip.hide);
 });
-
